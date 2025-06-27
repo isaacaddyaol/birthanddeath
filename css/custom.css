@@ -1,0 +1,73 @@
+/* Custom styles to improve sidebar and dropdown visibility */
+
+/* Sidebar styles */
+.sidebar {
+  background: #2d3e50 !important;
+}
+
+.sidebar .nav .nav-item .nav-link {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.sidebar .nav .nav-item .nav-link:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+.sidebar .nav .nav-item.active > .nav-link {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+.sidebar .nav .nav-item .nav-link i {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.sidebar .nav .nav-item .nav-link:hover i {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Submenu styles */
+.sidebar .nav.sub-menu {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 0 0.5rem 3.5rem !important;
+}
+
+.sidebar .nav.sub-menu .nav-item .nav-link {
+  color: rgba(255, 255, 255, 0.7) !important;
+  padding: 0.8rem 1rem !important;
+}
+
+.sidebar .nav.sub-menu .nav-item .nav-link:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+.sidebar .nav.sub-menu .nav-item .nav-link.active {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+/* Dropdown styles */
+.dropdown-menu {
+  background: #ffffff;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-item {
+  color: #2d3e50;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+  background: rgba(45, 62, 80, 0.1);
+  color: #2d3e50;
+}
+
+/* Menu arrow color fix */
+.sidebar .nav .nav-item .nav-link i.menu-arrow:before {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.sidebar .nav .nav-item .nav-link:hover i.menu-arrow:before {
+  color: rgba(255, 255, 255, 0.8) !important;
+} 
