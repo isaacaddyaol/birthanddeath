@@ -17,7 +17,7 @@ if (!isset($_SESSION['email']))
 if (isset($_SESSION['RegCentre']))
 {
 
-$querys = mysqli_query($con,"select  * from tblcentre where centreId =".$_SESSION['RegCentre']."") or die(mysqli_error());
+$querys = mysqli_query($con,"select  * from tblcentre where centreId =".$_SESSION['RegCentre']."") or die(mysqli_error($con));
 $rows = mysqli_fetch_array($querys);
 $regCentre = $rows['centreName'];
 
@@ -38,6 +38,10 @@ $regCentre = $rows['centreName'];
   <link rel="stylesheet" href="vendors/css/vendor.bundle.addons.css">
   <!-- Select2 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <!-- Face-api.js for facial recognition -->
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/dist/face-api.min.js"></script>
+  <!-- Camera Capture CSS -->
+  <link rel="stylesheet" href="css/camera-capture.css">
   <!-- endinject -->
   <!-- plugin css for this page -->
   <!-- End plugin css for this page -->
@@ -50,6 +54,10 @@ $regCentre = $rows['centreName'];
   <!-- jQuery and Select2 JS -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <!-- Facial Recognition Client Library -->
+  <script src="js/facial-recognition-client.js"></script>
+  <!-- Camera Capture Client Library -->
+  <script src="js/camera-capture-client.js"></script>
   
   <script>
   $(document).ready(function() {
@@ -510,6 +518,195 @@ $regCentre = $rows['centreName'];
         background-color: #3498db;
         color: white;
     }
+    
+    /* Facial Recognition Styles */
+    .facial-recognition-section {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+    
+    .facial-recognition-section.active {
+        border-color: #3498db;
+        background: #f0f8ff;
+    }
+    
+    .face-capture-area {
+        border: 3px dashed #e0e0e0;
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+        background: #fafafa;
+        transition: all 0.3s ease;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .face-capture-area.dragover {
+        border-color: #3498db;
+        background: #e3f2fd;
+    }
+    
+    .face-capture-area.processing {
+        border-color: #ff9800;
+        background: #fff3e0;
+    }
+    
+    .face-capture-area.success {
+        border-color: #4caf50;
+        background: #e8f5e8;
+    }
+    
+    .face-capture-area.error {
+        border-color: #f44336;
+        background: #ffebee;
+    }
+    
+    .face-preview {
+        max-width: 300px;
+        max-height: 300px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        margin-bottom: 15px;
+    }
+    
+    .face-detection-overlay {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .face-detection-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
+    
+    .face-capture-progress {
+        width: 100%;
+        max-width: 300px;
+        margin: 15px 0;
+    }
+    
+    .face-capture-status {
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 10px;
+        padding: 8px 16px;
+        border-radius: 20px;
+        display: inline-block;
+    }
+    
+    .face-capture-status.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    
+    .face-capture-status.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    
+    .face-capture-status.processing {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+    }
+    
+    .face-capture-status.info {
+        background: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+    }
+    
+    .face-capture-actions {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .face-metrics {
+        display: flex;
+        gap: 20px;
+        margin-top: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .face-metric {
+        text-align: center;
+        padding: 10px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        min-width: 80px;
+    }
+    
+    .face-metric-value {
+        font-size: 18px;
+        font-weight: bold;
+        color: #3498db;
+    }
+    
+    .face-metric-label {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+    }
+    
+    .facial-recognition-help {
+        background: #e8f4fd;
+        border-left: 4px solid #3498db;
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 0 8px 8px 0;
+    }
+    
+    .facial-recognition-help h6 {
+        color: #2980b9;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+    
+    .facial-recognition-help ul {
+        margin-bottom: 0;
+        padding-left: 20px;
+    }
+    
+    .facial-recognition-help li {
+        margin-bottom: 5px;
+        color: #34495e;
+    }
+    
+    @media (max-width: 768px) {
+        .face-capture-area {
+            padding: 20px;
+            min-height: 150px;
+        }
+        
+        .face-preview {
+            max-width: 200px;
+            max-height: 200px;
+        }
+        
+        .face-metrics {
+            gap: 10px;
+        }
+        
+        .face-metric {
+            min-width: 60px;
+            padding: 8px;
+        }
+    }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
@@ -713,6 +910,7 @@ $regCentre = $rows['centreName'];
           <?php 
           
           error_reporting(1);
+          require_once 'lib/FacialRecognition.php';
           
                if (isset($_POST['btnSubmit'])) {
                    $firstName = $_POST['firstName'];
@@ -735,6 +933,20 @@ $regCentre = $rows['centreName'];
                    $regCentre = $_POST['regCentre'];
                    $dateReg = date('Y-m-d');
                    $payId = isset($_SESSION['payment_status']) && $_SESSION['payment_status'] === 'paid' ? 1 : 0;  // Set payment status
+
+                   // Get facial recognition data
+                   $faceDescriptor = $_POST['face_descriptor'] ?? null;
+                   $faceImageData = $_POST['face_image_data'] ?? null;
+                   $faceConfidence = $_POST['face_confidence'] ?? null;
+                   $faceQuality = $_POST['face_quality'] ?? null;
+                   $faceLandmarks = $_POST['face_landmarks'] ?? null;
+                   $faceProcessed = $_POST['face_processed'] ?? '0';
+
+                   // Validate facial recognition data
+                   if ($faceProcessed !== '1' || !$faceDescriptor || !$faceImageData) {
+                       echo "<script>alert('Error: Facial recognition data is required. Please capture a face photo.');</script>";
+                       exit;
+                   }
 
                    // Handle biometric data
                    if (!isset($_FILES['biofield']) || $_FILES['biofield']['error'] != 0) {
@@ -823,19 +1035,70 @@ $regCentre = $rows['centreName'];
                        exit;
                    }
 
-                   // Insert birth record
-                   $result = $con->query("INSERT INTO tblbirth (certNo, firstName, lastName, fathersName, mothersName, gender, genotype, weight, birthPlace, state, lga, dateOfBirth, PlaceOfIssue, regCentre, dateReg, pod, father_occupation, father_nationality, father_religion, mother_nationality, biometric, imageType, payId) 
-                                        VALUES ('$newNum1', '$firstName', '$lastName', '$fathersName', '$mothersName', '$gender', '$genotype', '$weight', '$bPlace', '$state', '$lga', '$dob', '$Placeissue', '$regCentre', '$dateReg', '$pod', '$father_occupation', '$father_nationality', '$father_religion', '$mother_nationality', '$imgData', '{$imageProperties['mime']}', '$payId')") 
+                   // Insert birth record with facial recognition enabled flag
+                   $result = $con->query("INSERT INTO tblbirth (certNo, firstName, lastName, fathersName, mothersName, gender, genotype, weight, birthPlace, state, lga, dateOfBirth, PlaceOfIssue, regCentre, dateReg, pod, father_occupation, father_nationality, father_religion, mother_nationality, biometric, imageType, payId, has_facial_data, facial_verification_enabled, face_capture_date) 
+                                        VALUES ('$newNum1', '$firstName', '$lastName', '$fathersName', '$mothersName', '$gender', '$genotype', '$weight', '$bPlace', '$state', '$lga', '$dob', '$Placeissue', '$regCentre', '$dateReg', '$pod', '$father_occupation', '$father_nationality', '$father_religion', '$mother_nationality', '$imgData', '{$imageProperties['mime']}', '$payId', 1, 1, NOW())") 
                                         or die(mysqli_error($con));
 
                    if ($result) {
+                       // Get the inserted birth ID
+                       $birthId = mysqli_insert_id($con);
+                       
+                       // Initialize facial recognition and store facial data
+                       try {
+                           $facialRecognition = new FacialRecognition();
+                           
+                           // Parse facial data
+                           $descriptor = json_decode($faceDescriptor, true);
+                           if (!is_array($descriptor)) {
+                               throw new Exception('Invalid face descriptor format');
+                           }
+                           
+                           // Remove data URL prefix from image if present
+                           if (strpos($faceImageData, 'data:image') === 0) {
+                               $faceImageData = substr($faceImageData, strpos($faceImageData, ',') + 1);
+                           }
+                           
+                           // Store facial recognition data
+                           $faceResult = $facialRecognition->storeFacialData(
+                               $birthId,
+                               $faceImageData,
+                               $descriptor,
+                               floatval($faceConfidence)
+                           );
+                           
+                           if (!$faceResult['success']) {
+                               // Log error but don't fail the registration
+                               error_log("Failed to store facial data for birth ID $birthId: " . $faceResult['error']);
+                               
+                               // Update birth record to indicate facial data storage failed
+                               $con->query("UPDATE tblbirth SET has_facial_data = 0 WHERE birthId = $birthId");
+                               
+                               echo "<script>alert('Birth registration successful, but facial recognition data could not be stored. Certificate: $newNum1');</script>";
+                           } else {
+                               // Success - both birth record and facial data stored
+                               echo "<script>alert('Birth registration and facial recognition data stored successfully! Certificate: $newNum1');</script>";
+                           }
+                           
+                       } catch (Exception $e) {
+                           // Log error but don't fail the registration
+                           error_log("Facial recognition error for birth ID $birthId: " . $e->getMessage());
+                           
+                           // Update birth record to indicate facial data storage failed
+                           $con->query("UPDATE tblbirth SET has_facial_data = 0 WHERE birthId = $birthId");
+                           
+                           echo "<script>alert('Birth registration successful, but facial recognition setup failed. Certificate: $newNum1');</script>";
+                       }
+                       
                        // Clear payment status after successful registration
                        unset($_SESSION['payment_status']);
                        
                        echo "<script>
-                           alert('Successfully Registered!');
-                           window.location = 'BirthRegistration.php';
+                           setTimeout(function() {
+                               window.location = 'BirthRegistration.php';
+                           }, 2000);
                        </script>";
+                       
                    } else {
                        echo "<script>alert('Error: Registration failed');</script>";
                    }
@@ -1089,6 +1352,108 @@ $regCentre = $rows['centreName'];
                                           </div>
                                           <div class="upload-status mt-2" id="uploadStatus"></div>
                                       </div>
+                                  </div>
+                              </div>
+                          </div>
+                          
+                          <!-- Facial Recognition Section -->
+                          <div class="row">
+                              <div class="col-md-12">
+                                  <div class="form-group">
+                                      <label class="required-field">Facial Recognition Data</label>
+                                      <div class="facial-recognition-section" id="facialRecognitionSection">
+                                          <div class="face-capture-area" id="faceCaptureArea">
+                                              <div id="faceCaptureContent">
+                                                  <i class="fas fa-user-circle fa-4x mb-3" style="color: #3498db;"></i>
+                                                  <h5>Capture Face for Recognition</h5>
+                                                  <p class="text-muted">Use your camera or upload a photo showing the child's face for biometric verification</p>
+                                                  <small class="text-muted d-block mb-3">This will be used for certificate verification and security</small>
+                                                  
+                                                  <!-- Camera or Upload Options -->
+                                                  <div class="capture-options mb-3">
+                                                      <button type="button" class="btn btn-primary me-2" id="useCameraBtn">
+                                                          <i class="fas fa-camera"></i> Use Camera
+                                                      </button>
+                                                      <button type="button" class="btn btn-outline-primary" id="uploadFileBtn">
+                                                          <i class="fas fa-upload"></i> Upload Photo
+                                                      </button>
+                                                  </div>
+                                                  
+                                                  <input type="file" id="faceImageField" class="file-input" 
+                                                         accept="image/*" required hidden/>
+                                              </div>
+                                              
+                                              <!-- Camera Capture Interface -->
+                                              <div id="cameraInterface" style="display: none;">
+                                                  <div id="cameraContainer"></div>
+                                              </div>
+                                              
+                                              <!-- Face Processing Area -->
+                                              <div id="faceProcessingArea" style="display: none;">
+                                                  <div class="face-detection-overlay" id="faceDetectionOverlay">
+                                                      <img id="facePreview" src="" alt="Face Preview" class="face-preview"/>
+                                                      <canvas id="faceDetectionCanvas" class="face-detection-canvas"></canvas>
+                                                  </div>
+                                                  
+                                                  <!-- Progress Bar -->
+                                                  <div class="progress face-capture-progress" id="faceProgress" style="display: none;">
+                                                      <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                                           role="progressbar" style="width: 0%" id="faceProgressBar">
+                                                          <span id="faceProgressText">Processing...</span>
+                                                      </div>
+                                                  </div>
+                                                  
+                                                  <!-- Status Display -->
+                                                  <div id="faceStatus" class="face-capture-status" style="display: none;"></div>
+                                                  
+                                                  <!-- Face Metrics -->
+                                                  <div id="faceMetrics" class="face-metrics" style="display: none;">
+                                                      <div class="face-metric">
+                                                          <div class="face-metric-value" id="faceConfidence">-</div>
+                                                          <div class="face-metric-label">Confidence</div>
+                                                      </div>
+                                                      <div class="face-metric">
+                                                          <div class="face-metric-value" id="faceQuality">-</div>
+                                                          <div class="face-metric-label">Quality</div>
+                                                      </div>
+                                                  </div>
+                                                  
+                                                  <!-- Action Buttons -->
+                                                  <div class="face-capture-actions" id="faceActions" style="display: none;">
+                                                      <button type="button" class="btn btn-success" id="acceptFaceBtn" style="display: none;">
+                                                          <i class="fas fa-check"></i> Accept Face
+                                                      </button>
+                                                      <button type="button" class="btn btn-warning" id="retryFaceBtn">
+                                                          <i class="fas fa-redo"></i> Try Another Photo
+                                                      </button>
+                                                      <button type="button" class="btn btn-danger" id="cancelFaceBtn">
+                                                          <i class="fas fa-times"></i> Cancel
+                                                      </button>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                          
+                                          <!-- Help Section -->
+                                          <div class="facial-recognition-help">
+                                              <h6><i class="fas fa-info-circle"></i> Face Photo Guidelines</h6>
+                                              <ul>
+                                                  <li>Use a clear, recent photo showing the full face</li>
+                                                  <li>Ensure good lighting with no shadows on the face</li>
+                                                  <li>Face should be straight and looking at the camera</li>
+                                                  <li>Avoid glasses, hats, or anything covering the face</li>
+                                                  <li>Only one person should be visible in the photo</li>
+                                                  <li>Recommended size: at least 400x400 pixels</li>
+                                              </ul>
+                                          </div>
+                                      </div>
+                                      
+                                      <!-- Hidden fields for facial recognition data -->
+                                      <input type="hidden" id="faceDescriptor" name="face_descriptor" />
+                                      <input type="hidden" id="faceImageData" name="face_image_data" />
+                                      <input type="hidden" id="faceConfidenceValue" name="face_confidence" />
+                                      <input type="hidden" id="faceQualityValue" name="face_quality" />
+                                      <input type="hidden" id="faceLandmarks" name="face_landmarks" />
+                                      <input type="hidden" id="faceProcessed" name="face_processed" value="0" />
                                   </div>
                               </div>
                           </div>
@@ -1403,7 +1768,525 @@ document.getElementById("datefield").setAttribute("max", today);
     // Initialize text-only validation when the document is ready
     document.addEventListener('DOMContentLoaded', function() {
         initializeTextOnlyFields();
+        initializeFacialRecognition();
     });
+    
+    // Facial Recognition Initialization and Handlers
+    let facialRecognitionClient;
+    let cameraClient;
+    let currentBirthId;
+    
+    async function initializeFacialRecognition() {
+        try {
+            facialRecognitionClient = new FacialRecognitionClient();
+            cameraClient = new CameraCaptureClient();
+            
+            // Set up callbacks for facial recognition
+            facialRecognitionClient.setCallbacks({
+                onProgress: updateFaceProgress,
+                onSuccess: handleFaceSuccess,
+                onError: handleFaceError
+            });
+            
+            // Set up callbacks for camera capture
+            cameraClient.setCallbacks({
+                onCameraReady: handleCameraReady,
+                onCameraError: handleCameraError,
+                onPhotoCapture: handleCameraPhotoCapture,
+                onStreamEnd: handleCameraStreamEnd
+            });
+            
+            // Set up event listeners
+            setupFaceEventListeners();
+            setupCameraEventListeners();
+            
+            console.log('Facial recognition and camera capture initialized successfully');
+            
+        } catch (error) {
+            console.error('Failed to initialize facial recognition:', error);
+            showFaceStatus('Facial recognition initialization failed: ' + error.message, 'error');
+        }
+    }
+    
+    function setupFaceEventListeners() {
+        const faceImageField = document.getElementById('faceImageField');
+        const faceCaptureArea = document.getElementById('faceCaptureArea');
+        const acceptFaceBtn = document.getElementById('acceptFaceBtn');
+        const retryFaceBtn = document.getElementById('retryFaceBtn');
+        const cancelFaceBtn = document.getElementById('cancelFaceBtn');
+        
+        // File input change handler
+        faceImageField.addEventListener('change', handleFaceImageSelect);
+        
+        // Drag and drop handlers
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            faceCaptureArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            faceCaptureArea.addEventListener(eventName, () => {
+                faceCaptureArea.classList.add('dragover');
+            }, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            faceCaptureArea.addEventListener(eventName, () => {
+                faceCaptureArea.classList.remove('dragover');
+            }, false);
+        });
+        
+        faceCaptureArea.addEventListener('drop', handleFaceDrop, false);
+        
+        // Button handlers
+        acceptFaceBtn.addEventListener('click', acceptFaceData);
+        retryFaceBtn.addEventListener('click', retryFaceCapture);
+        cancelFaceBtn.addEventListener('click', cancelFaceCapture);
+        
+        // Form submission validation
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', validateFaceDataBeforeSubmit);
+        }
+    }
+    
+    function setupCameraEventListeners() {
+        const useCameraBtn = document.getElementById('useCameraBtn');
+        const uploadFileBtn = document.getElementById('uploadFileBtn');
+        
+        if (useCameraBtn) {
+            useCameraBtn.addEventListener('click', showCameraInterface);
+        }
+        
+        if (uploadFileBtn) {
+            uploadFileBtn.addEventListener('click', showFileUploadInterface);
+        }
+    }
+    
+    function showCameraInterface() {
+        try {
+            // Hide file upload interface
+            document.getElementById('faceCaptureContent').style.display = 'none';
+            
+            // Show camera interface
+            const cameraInterface = document.getElementById('cameraInterface');
+            cameraInterface.style.display = 'block';
+            
+            // Create camera UI
+            cameraClient.createCameraUI('cameraContainer');
+            
+            // Update status
+            showFaceStatus('Camera interface ready. Click "Start Camera" to begin.', 'info');
+            
+        } catch (error) {
+            console.error('Failed to show camera interface:', error);
+            showFaceStatus('Failed to initialize camera interface: ' + error.message, 'error');
+        }
+    }
+    
+    function showFileUploadInterface() {
+        // Hide camera interface
+        document.getElementById('cameraInterface').style.display = 'none';
+        
+        // Show file upload interface
+        document.getElementById('faceCaptureContent').style.display = 'block';
+        
+        // Trigger file input
+        document.getElementById('faceImageField').click();
+    }
+    
+    // Camera event handlers
+    function handleCameraReady() {
+        showFaceStatus('Camera is ready. Position your face in the oval guide and click "Capture Photo".', 'success');
+    }
+    
+    function handleCameraError(error) {
+        console.error('Camera error:', error);
+        let errorMessage = 'Camera error: ' + error.message;
+        
+        if (error.name === 'NotAllowedError') {
+            errorMessage = 'Camera access denied. Please allow camera permissions and try again.';
+        } else if (error.name === 'NotFoundError') {
+            errorMessage = 'No camera found. Please connect a camera and try again.';
+        } else if (error.name === 'NotReadableError') {
+            errorMessage = 'Camera is being used by another application. Please close other apps and try again.';
+        }
+        
+        showFaceStatus(errorMessage, 'error');
+    }
+    
+    async function handleCameraPhotoCapture(imageData) {
+        try {
+            showFaceStatus('Photo captured! Processing facial recognition...', 'info');
+            
+            // Process the captured image with facial recognition
+            await processCapturedImage(imageData.file);
+            
+            // Show capture preview
+            showCapturedPhotoPreview(imageData.dataUrl);
+            
+        } catch (error) {
+            console.error('Failed to process captured photo:', error);
+            showFaceStatus('Failed to process captured photo: ' + error.message, 'error');
+        }
+    }
+    
+    function handleCameraStreamEnd() {
+        showFaceStatus('Camera stopped.', 'info');
+    }
+    
+    function showCapturedPhotoPreview(dataUrl) {
+        const cameraContainer = document.getElementById('cameraContainer');
+        
+        // Add preview section if it doesn't exist
+        let previewSection = document.getElementById('capturedPhotoPreview');
+        if (!previewSection) {
+            previewSection = document.createElement('div');
+            previewSection.id = 'capturedPhotoPreview';
+            previewSection.className = 'captured-photo-preview';
+            cameraContainer.appendChild(previewSection);
+        }
+        
+        previewSection.innerHTML = `
+            <h5><i class="fas fa-image"></i> Captured Photo</h5>
+            <img src="${dataUrl}" alt="Captured Face" class="img-fluid mb-3">
+            <div class="captured-photo-actions">
+                <button type="button" class="btn btn-success" onclick="acceptCapturedPhoto()">
+                    <i class="fas fa-check"></i> Accept Photo
+                </button>
+                <button type="button" class="btn btn-warning" onclick="retakeCameraPhoto()">
+                    <i class="fas fa-redo"></i> Retake Photo
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="switchToFileUpload()">
+                    <i class="fas fa-upload"></i> Upload Instead
+                </button>
+            </div>
+        `;
+    }
+    
+    function acceptCapturedPhoto() {
+        // Hide camera interface and show success
+        document.getElementById('cameraInterface').style.display = 'none';
+        document.getElementById('faceCaptureContent').style.display = 'block';
+        
+        // Update the main interface to show photo accepted
+        document.getElementById('faceCaptureContent').innerHTML = `
+            <i class="fas fa-check-circle fa-4x mb-3" style="color: #28a745;"></i>
+            <h5>Face Photo Captured Successfully</h5>
+            <p class="text-success">Face photo has been captured and processed for biometric verification.</p>
+            <div class="mt-3">
+                <button type="button" class="btn btn-warning" onclick="retakePhoto()">
+                    <i class="fas fa-camera"></i> Take Another Photo
+                </button>
+            </div>
+        `;
+        
+        showFaceStatus('Face photo accepted and ready for registration.', 'success');
+    }
+    
+    function retakeCameraPhoto() {
+        // Remove preview and restart camera
+        const previewSection = document.getElementById('capturedPhotoPreview');
+        if (previewSection) {
+            previewSection.remove();
+        }
+        
+        showFaceStatus('Ready to capture another photo.', 'info');
+    }
+    
+    function switchToFileUpload() {
+        // Stop camera and switch to file upload
+        cameraClient.stopCamera();
+        showFileUploadInterface();
+    }
+    
+    function retakePhoto() {
+        // Reset the interface to show capture options again
+        document.getElementById('faceCaptureContent').innerHTML = `
+            <i class="fas fa-user-circle fa-4x mb-3" style="color: #3498db;"></i>
+            <h5>Capture Face for Recognition</h5>
+            <p class="text-muted">Use your camera or upload a photo showing the child's face for biometric verification</p>
+            <small class="text-muted d-block mb-3">This will be used for certificate verification and security</small>
+            
+            <div class="capture-options mb-3">
+                <button type="button" class="btn btn-primary me-2" id="useCameraBtn">
+                    <i class="fas fa-camera"></i> Use Camera
+                </button>
+                <button type="button" class="btn btn-outline-primary" id="uploadFileBtn">
+                    <i class="fas fa-upload"></i> Upload Photo
+                </button>
+            </div>
+            
+            <input type="file" id="faceImageField" class="file-input" 
+                   accept="image/*" required hidden/>
+        `;
+        
+        // Re-setup event listeners
+        setupCameraEventListeners();
+        setupFaceEventListeners();
+        
+        // Reset hidden fields
+        resetFaceCapture();
+    }
+    
+    async function processCapturedImage(file) {
+        // Use the existing facial recognition processing logic
+        await processFaceImage(file);
+    }
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    async function handleFaceImageSelect(event) {
+        const file = event.target.files[0];
+        if (file) {
+            await processFaceImage(file);
+        }
+    }
+    
+    async function handleFaceDrop(event) {
+        const files = event.dataTransfer.files;
+        if (files.length > 0) {
+            await processFaceImage(files[0]);
+        }
+    }
+    
+    async function processFaceImage(file) {
+        try {
+            // Validate file
+            if (!file.type.startsWith('image/')) {
+                throw new Error('Please select a valid image file');
+            }
+            
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                throw new Error('Image file is too large. Please use an image smaller than 5MB');
+            }
+            
+            // Show processing state
+            showFaceProcessingArea();
+            showFaceProgress('Initializing face detection...', 10);
+            
+            // Initialize face-api if not already done
+            await facialRecognitionClient.initialize(updateFaceProgress);
+            
+            // Display image preview
+            const imageUrl = URL.createObjectURL(file);
+            const facePreview = document.getElementById('facePreview');
+            facePreview.src = imageUrl;
+            facePreview.onload = async () => {
+                URL.revokeObjectURL(imageUrl);
+                await detectAndProcessFace(facePreview, file);
+            };
+            
+        } catch (error) {
+            console.error('Face processing error:', error);
+            handleFaceError(error);
+        }
+    }
+    
+    async function detectAndProcessFace(imageElement, file) {
+        try {
+            showFaceProgress('Detecting face...', 30);
+            
+            // Detect faces
+            const detection = await facialRecognitionClient.detectFaces(imageElement);
+            
+            if (!detection.success) {
+                throw new Error('Face detection failed: ' + detection.error);
+            }
+            
+            if (detection.faceCount === 0) {
+                throw new Error('No face detected in the image. Please use a clear photo showing a face.');
+            }
+            
+            if (detection.faceCount > 1) {
+                throw new Error('Multiple faces detected. Please use a photo with only one person.');
+            }
+            
+            showFaceProgress('Processing facial features...', 60);
+            
+            const faceDetection = detection.detections[0];
+            const confidence = faceDetection.detection.score;
+            
+            // Check confidence threshold
+            if (confidence < 0.5) {
+                throw new Error(`Face detection confidence too low (${(confidence * 100).toFixed(1)}%). Please use a clearer image.`);
+            }
+            
+            // Draw detection overlay
+            drawFaceDetection(faceDetection);
+            
+            // Extract face data
+            const descriptor = Array.from(faceDetection.descriptor);
+            const landmarks = facialRecognitionClient.extractLandmarks(faceDetection.landmarks);
+            const qualityScore = facialRecognitionClient.calculateQualityScore(faceDetection);
+            
+            // Convert image to base64
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = imageElement.width;
+            canvas.height = imageElement.height;
+            ctx.drawImage(imageElement, 0, 0);
+            const imageData = canvas.toDataURL('image/jpeg', 0.9);
+            
+            // Store data in hidden fields
+            document.getElementById('faceDescriptor').value = JSON.stringify(descriptor);
+            document.getElementById('faceImageData').value = imageData;
+            document.getElementById('faceConfidenceValue').value = confidence;
+            document.getElementById('faceQualityValue').value = qualityScore;
+            document.getElementById('faceLandmarks').value = JSON.stringify(landmarks);
+            
+            showFaceProgress('Face processing complete!', 100);
+            
+            // Update metrics display
+            updateFaceMetrics(confidence, qualityScore);
+            
+            // Show success state
+            setTimeout(() => {
+                showFaceStatus('Face detected and processed successfully!', 'success');
+                showFaceActions(true);
+                document.getElementById('faceProcessed').value = '1';
+            }, 500);
+            
+        } catch (error) {
+            console.error('Face detection error:', error);
+            handleFaceError(error);
+        }
+    }
+    
+    function drawFaceDetection(detection) {
+        const canvas = document.getElementById('faceDetectionCanvas');
+        const preview = document.getElementById('facePreview');
+        
+        canvas.width = preview.width;
+        canvas.height = preview.height;
+        canvas.style.width = preview.style.width;
+        canvas.style.height = preview.style.height;
+        
+        facialRecognitionClient.drawDetections(canvas, [detection], {
+            drawBox: true,
+            drawLandmarks: true,
+            boxColor: '#00ff00',
+            landmarkColor: '#ff0000'
+        });
+    }
+    
+    function showFaceProcessingArea() {
+        document.getElementById('faceCaptureContent').style.display = 'none';
+        document.getElementById('faceProcessingArea').style.display = 'block';
+        document.getElementById('facialRecognitionSection').classList.add('active');
+        document.getElementById('faceCaptureArea').classList.add('processing');
+    }
+    
+    function showFaceProgress(message, percentage) {
+        const progress = document.getElementById('faceProgress');
+        const progressBar = document.getElementById('faceProgressBar');
+        const progressText = document.getElementById('faceProgressText');
+        
+        progress.style.display = 'block';
+        progressBar.style.width = percentage + '%';
+        progressText.textContent = message;
+    }
+    
+    function hideFaceProgress() {
+        document.getElementById('faceProgress').style.display = 'none';
+    }
+    
+    function updateFaceProgress(message) {
+        console.log('Face processing:', message);
+        // You can update progress here if needed
+    }
+    
+    function showFaceStatus(message, type) {
+        const status = document.getElementById('faceStatus');
+        status.textContent = message;
+        status.className = 'face-capture-status ' + type;
+        status.style.display = 'block';
+        
+        // Update capture area class
+        const captureArea = document.getElementById('faceCaptureArea');
+        captureArea.className = 'face-capture-area ' + type;
+    }
+    
+    function updateFaceMetrics(confidence, quality) {
+        document.getElementById('faceConfidence').textContent = (confidence * 100).toFixed(1) + '%';
+        document.getElementById('faceQuality').textContent = (quality * 100).toFixed(1) + '%';
+        document.getElementById('faceMetrics').style.display = 'flex';
+    }
+    
+    function showFaceActions(showAccept = false) {
+        const actions = document.getElementById('faceActions');
+        const acceptBtn = document.getElementById('acceptFaceBtn');
+        
+        actions.style.display = 'flex';
+        acceptBtn.style.display = showAccept ? 'block' : 'none';
+    }
+    
+    function acceptFaceData() {
+        showFaceStatus('Face data accepted and ready for registration', 'success');
+        document.getElementById('acceptFaceBtn').style.display = 'none';
+        hideFaceProgress();
+    }
+    
+    function retryFaceCapture() {
+        resetFaceCapture();
+        document.getElementById('faceImageField').click();
+    }
+    
+    function cancelFaceCapture() {
+        resetFaceCapture();
+    }
+    
+    function resetFaceCapture() {
+        // Clear hidden fields
+        document.getElementById('faceDescriptor').value = '';
+        document.getElementById('faceImageData').value = '';
+        document.getElementById('faceConfidenceValue').value = '';
+        document.getElementById('faceQualityValue').value = '';
+        document.getElementById('faceLandmarks').value = '';
+        document.getElementById('faceProcessed').value = '0';
+        
+        // Clear file input
+        document.getElementById('faceImageField').value = '';
+        
+        // Reset UI
+        document.getElementById('faceCaptureContent').style.display = 'block';
+        document.getElementById('faceProcessingArea').style.display = 'none';
+        document.getElementById('faceStatus').style.display = 'none';
+        document.getElementById('faceMetrics').style.display = 'none';
+        document.getElementById('faceActions').style.display = 'none';
+        hideFaceProgress();
+        
+        // Reset classes
+        document.getElementById('facialRecognitionSection').classList.remove('active');
+        document.getElementById('faceCaptureArea').className = 'face-capture-area';
+    }
+    
+    function handleFaceSuccess(result) {
+        console.log('Face processing success:', result);
+        showFaceStatus('Face data processed successfully!', 'success');
+    }
+    
+    function handleFaceError(error) {
+        console.error('Face processing error:', error);
+        showFaceStatus(error.message || 'Face processing failed', 'error');
+        showFaceActions(false);
+        hideFaceProgress();
+    }
+    
+    function validateFaceDataBeforeSubmit(event) {
+        const faceProcessed = document.getElementById('faceProcessed').value;
+        
+        if (faceProcessed !== '1') {
+            event.preventDefault();
+            alert('Please capture and process a face photo before submitting the form.');
+            document.getElementById('faceImageField').focus();
+            return false;
+        }
+        
+        return true;
+    }
   </script>
 </body>
 

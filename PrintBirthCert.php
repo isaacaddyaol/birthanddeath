@@ -275,7 +275,7 @@ if (!isset($_SESSION['email']))
 					        <tbody>
 
 					        <?php
-		  $query = $con->query("select * from tblbirth") or die(mysqli_error());
+		  $query = $con->query("select * from tblbirth") or die(mysqli_error($con));
           $count = mysqli_num_rows($query);
           while ($row = mysqli_fetch_array($query)) 
 {
@@ -301,7 +301,7 @@ if (!isset($_SESSION['email']))
                                     <td> <?php echo $row['PlaceOfIssue']; ?> </td>
                                     <td> <?php echo $row['regCentre']; ?> </td>
                                     <td> <?php echo $row['dateReg']; ?> </td>
-                                    <td><a href = "PrintBirthCertPage.php?birthRegId=<?php echo $birthRegId;?>" class="btn btn-success btn-fw"> <i class="mdi mdi-printer"></i>Print_Certificate</a></td>
+                                    <td><a href = "BiometricVerification.php?type=birth&id=<?php echo $birthRegId;?>" class="btn btn-success btn-fw"> <i class="mdi mdi-shield-check"></i>Verify & Print</a></td>
                                 </tr>
 
                                     
@@ -479,9 +479,9 @@ if (!isset($_SESSION['email']))
                           $dateReg = date('Y-m-d');
                              
 
-                    $result =  mysqli_query("insert into tblcentre (centreName,state,lga,dateReg)
+                    $result =  mysqli_query($con, "insert into tblcentre (centreName,state,lga,dateReg)
                             	values ('$centreName','$state','$lga','$dateReg')
-                                ") or die(mysqli_error());
+                                ") or die(mysqli_error($con));
 
                                          if($result){
 

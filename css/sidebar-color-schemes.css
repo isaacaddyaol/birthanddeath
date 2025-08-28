@@ -1,0 +1,98 @@
+/* Sidebar Color Schemes - Multiple Options */
+
+/* Current Active: Blue-Purple Gradient */
+.sidebar-scheme-blue-purple {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+/* Option 1: Teal-Blue Gradient */
+.sidebar-scheme-teal-blue {
+  background: linear-gradient(135deg, #1CB5E0 0%, #000851 100%) !important;
+}
+
+/* Option 2: Green-Blue Gradient */
+.sidebar-scheme-green-blue {
+  background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%) !important;
+}
+
+/* Option 3: Purple-Pink Gradient */
+.sidebar-scheme-purple-pink {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%) !important;
+}
+
+/* Option 4: Orange-Red Gradient */
+.sidebar-scheme-orange-red {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
+}
+
+/* Option 5: Dark Modern */
+.sidebar-scheme-dark-modern {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+}
+
+/* Option 6: Corporate Blue */
+.sidebar-scheme-corporate {
+  background: linear-gradient(135deg, #3742fa 0%, #2f3542 100%) !important;
+}
+
+/* Option 7: Mint Green */
+.sidebar-scheme-mint {
+  background: linear-gradient(135deg, #2ed573 0%, #1e3799 100%) !important;
+}
+
+/* Option 8: Sunset Orange */
+.sidebar-scheme-sunset {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%) !important;
+}
+
+/* Option 9: Royal Purple */
+.sidebar-scheme-royal {
+  background: linear-gradient(135deg, #8e44ad 0%, #3742fa 100%) !important;
+}
+
+/* Option 10: Ocean Blue */
+.sidebar-scheme-ocean {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important;
+}
+
+/* How to use these schemes:
+   
+   1. Replace the current sidebar background in sidebar.php with any of these classes:
+      Example: <nav class="sidebar sidebar-scheme-teal-blue" ...>
+   
+   2. Or apply via JavaScript:
+      document.getElementById('sidebar').className = 'sidebar sidebar-scheme-mint';
+   
+   3. Or add to custom.css by replacing the gradient:
+      .sidebar { background: linear-gradient(...) !important; }
+*/
+
+/* Additional styling to complement any color scheme */
+.sidebar[class*="sidebar-scheme-"] {
+  box-shadow: 2px 0 15px rgba(0,0,0,0.15) !important;
+}
+
+.sidebar[class*="sidebar-scheme-"] .nav-link {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.sidebar[class*="sidebar-scheme-"] .nav-link:hover {
+  transform: translateX(5px) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.sidebar[class*="sidebar-scheme-"] .sub-menu .nav-link:hover {
+  transform: translateX(3px) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .sidebar[class*="sidebar-scheme-"] {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  
+  .sidebar[class*="sidebar-scheme-"].active {
+    transform: translateX(0);
+  }
+}

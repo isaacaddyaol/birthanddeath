@@ -274,7 +274,7 @@ if (!isset($_SESSION['email']))
 					        <tbody>
 
 					        <?php
-		  $query =$con->query("select  * from tbldeath") or die(mysqli_error());
+		  $query =$con->query("select  * from tbldeath") or die(mysqli_error($con));
           $count = mysqli_num_rows($query);
           while ($row = mysqli_fetch_array($query)) 
          
@@ -297,7 +297,7 @@ if (!isset($_SESSION['email']))
                                     <td> <?php echo $row['PlaceOfIssue']; ?> </td>
                                     <td> <?php echo $row['regCentre']; ?> </td>
                                     <td> <?php echo $row['dateReg']; ?> </td>
-                                    <td><a href = "PrintDeathCertPage.php?deathRegId=<?php echo $deathRegId;?>"class="btn btn-success btn-fw"> <i class="mdi mdi-printer"></i>Print_Certificate</a></td>
+                                    <td><a href = "BiometricVerification.php?type=death&id=<?php echo $deathRegId;?>"class="btn btn-success btn-fw"> <i class="mdi mdi-shield-check"></i>Verify & Print</a></td>
                                 </tr>
 
                                <?php  

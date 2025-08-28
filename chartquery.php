@@ -8,7 +8,7 @@ if(isset($_POST['type'])){
     $type = $_POST['type'];
     
     if($type=='birth'){
-        $query = $con->query("SELECT * FROM tblbirth WHERE state='$region' AND YEAR(dateOfBirth)='$year'") or die(mysqli_error());
+        $query = $con->query("SELECT * FROM tblbirth WHERE state='$region' AND YEAR(dateOfBirth)='$year'") or die(mysqli_error($con));
         $month1 = $month2 = $month3 = $month4 = $month5 = $month6 = $month7 = $month8 = $month9 = $month10 = $month11 = $month12 = 0;
         $month_1 = $month_2 = $month_3 = $month_4 = $month_5 = $month_6 = $month_7 = $month_8 = $month_9 = $month_10 = $month_11 = $month_12 = 0;
         
@@ -55,7 +55,7 @@ if(isset($_POST['type'])){
     }
     
     if($type=='death'){
-        $query = $con->query("SELECT * FROM tbldeath WHERE state='$region' AND YEAR(dateOfDeath)='$year'") or die(mysqli_error());
+        $query = $con->query("SELECT * FROM tbldeath WHERE state='$region' AND YEAR(dateOfDeath)='$year'") or die(mysqli_error($con));
         $month1 = $month2 = $month3 = $month4 = $month5 = $month6 = $month7 = $month8 = $month9 = $month10 = $month11 = $month12 = 0;
         $month_1 = $month_2 = $month_3 = $month_4 = $month_5 = $month_6 = $month_7 = $month_8 = $month_9 = $month_10 = $month_11 = $month_12 = 0;
         
